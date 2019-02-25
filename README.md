@@ -7,10 +7,22 @@ The server can be run on any available port and can receive messages from any nu
 
 ### Building the Server
 
-To build the server on a host machine run the following command in the server directory `make server`. The result of this command will be a executable called "server" within the same directory.
+The Server is implemented in C and C++ each perform exactly the same and are both built with the same process. To build the server on a host machine run the following command in the server directory `make server` or to build in C++ run `make cppserver`. The result of this command will be an executable called "server" within the same directory.
 
 ### Running the Server
 
 After the executable is built the server can be run using the following command `./server <port>`. Make sure to pass the program a valid port when booting it up.
 
-<!-- ## Client -->
+## Client
+
+The client should be run on the same port that a running server is on. The client will send the message passed to it and then exit. To use the client as the server it must be built first.
+
+### Building the Client
+
+The Client is implemented in C and C++ (basically the same source code but some headers differ) each perform exactly the same and are both built with the same process. Inside the corresponding folder for the client that needs to be built run `make client`.
+
+### Running the Client
+
+Like the Server the Client takes an argument for the port it should create a connection to. Additionally after the port, the message to be sent to the Server should be provided. `./client <port> <msg>
+
+Example: `./server 8080 test`

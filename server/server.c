@@ -5,11 +5,19 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "utilities.h"
+
+// C++ Requirments
+#include <unistd.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netinet/ip.h>
+
 #define VER 1
 /*
 Intitializes the socket connections and bindings 
 for the server. returns a connection struct of 
 type SocketInfo
+
 */
 struct SocketInfo init(int port) {
     struct sockaddr_in address;
@@ -55,14 +63,13 @@ int processMessages(int port) {
     char *response = "Message Received"; 
     
     int fresh_socket, read_value;
-    char msg[1024] = {0}; 
+    char *msg = malloc(sizeof(char)); 
     
     struct SocketInfo connection = init(port);
     struct sockaddr_in address = connection.address;
     int addrlen = sizeof(address);
 
     // Continue accepting messages indefinetly
-   
     while (1) {
         printf("Server: Listening for messages...\n"); 
         // Reset the the socket to our original value
@@ -72,7 +79,7 @@ int processMessages(int port) {
             exit(EXIT_FAILURE);
         } 
     
-        fresh_socket = accept(fresh_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen);
+        fresh_socket = accept(fresh_socket, (struct sockaddr *)&address, (socklen_t*) &addrlen);
         if (fresh_socket < 0) { 
             perror("Error while accepting message"); 
             exit(EXIT_FAILURE);
@@ -86,6 +93,7 @@ int processMessages(int port) {
         // response = concat(response, cur_time);
         send(fresh_socket, response, strlen(response), 0); 
         printf("Server: Message Confirmation Sent to Client\n"); 
+        free(msg);
     }
     
     return 0; 
