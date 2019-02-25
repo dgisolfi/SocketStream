@@ -19,7 +19,7 @@ The client should be run on the same port that a running server is on. The clien
 
 ### Building the Client
 
-The Client is implemented in C and C++ (basically the same source code but some headers differ) each perform exactly the same and are both built with the same process. Inside the corresponding folder for the client that needs to be built run `make client`.
+The Client is implemented in C and C++ each perform exactly the same and are both built with the same process. Inside the client directory run `make client` or `make cppclient`.
 
 ### Running the Client
 

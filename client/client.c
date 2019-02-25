@@ -4,6 +4,12 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+// C++ Requirments
+#include <unistd.h>
+#include <sys/types.h>
+#include <arpa/inet.h>
+#include <netinet/ip.h>
+
 #define VER 1
    
 int transmitMessage(int port, char *msg) { 
@@ -66,7 +72,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("Client: Shutting Down"); 
+    printf("Client: Shutting Down\n"); 
 
     return 0;
 }
