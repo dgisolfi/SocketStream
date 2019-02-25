@@ -51,4 +51,7 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-/client
+
+/client/CppClient
+.vscode
+.vs

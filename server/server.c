@@ -50,7 +50,7 @@ struct SocketInfo init(int port) {
     return info;
 }
 
-int processRequests(int port) {
+int processMessages(int port) {
     // Server response
     char *response = "Message Received by Server"; 
     
@@ -103,8 +103,9 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (processRequests(port) == 1) {
+    if (processMessages(port) == 1) {
         perror("Server Failure while handling message");
         exit(EXIT_FAILURE);
     }
+    return 0;
 }

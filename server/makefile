@@ -5,8 +5,6 @@ SRC = server.c
 CFLAGS = -I$(TOP)/include $(COPT)
 LIBS = -lpthread
 
-# include $(TOP)/resources/Makefile.in-os
-
 ifeq ($(TARGET_OS),LINUX) 
 	LIBS += -ldl
 endif
