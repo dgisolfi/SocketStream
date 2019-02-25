@@ -11,7 +11,7 @@ The Server is implemented in C and C++ each perform exactly the same and are bot
 
 ### Running the Server
 
-After the executable is built the server can be run using the following command `./server <port>`. Make sure to pass the program a valid port when booting it up.
+After the executable is built the server can be run using the following command `./server <port>`. Make sure to pass the program a valid port when booting it up. To exit the server press any key.
 
 ## Client
 

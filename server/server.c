@@ -67,7 +67,7 @@ int processMessages(int port) {
     int addrlen = sizeof(address);
 
     // Continue accepting messages indefinetly
-    while (1) {
+    while (getchar() != '\n') {
         printf("Server: Listening for messages...\n"); 
         // Reset the the socket to our original value
         fresh_socket = connection.socket;
