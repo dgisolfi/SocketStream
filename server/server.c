@@ -1,3 +1,4 @@
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,7 +11,7 @@ Intitializes the socket connections and bindings
 for the server. returns a connection struct of 
 type SocketInfo
 */
-struct SocketInfo init() {
+struct SocketInfo init(int port) {
     struct sockaddr_in address;
     int opt = 1; 
     
@@ -18,64 +19,92 @@ struct SocketInfo init() {
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     // Check that the socket was created
     if (sock == 0) {
-        printf("Error socket stream on port: %u\n", PORT);
-        exit(1);
+        perror("Error socket stream on port");
+        exit(EXIT_FAILURE);
     } else {
-        printf("Socket Stream created on port: %u\n", PORT);
+        printf("Socket Stream created on port: %u\n", port);
     }
 
     int sockset = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
     if (sockset == 1) {
-        printf("Error setting sock address sturucture\n");
-        exit(1);
+        perror("Error setting sock address sturucture\n");
+        exit(EXIT_FAILURE);
     }
 
     address.sin_family = AF_INET; 
     address.sin_addr.s_addr = INADDR_ANY; 
-    address.sin_port = htons( PORT ); 
+    address.sin_port = htons(port); 
     
     // Now bind that socket to a port
     int binded = bind(sock, (struct sockaddr *)&address, sizeof(address));
     if (binded < 0) {
-        printf("Error binding to port: %u\n", PORT);
-        exit(1);
+        perror("Error binding to port");
+        exit(EXIT_FAILURE);
     } else {
-        printf("Socket Binded to port: %u\n", PORT);
+        printf("Socket Binded to port: %u\n", port);
     }
 
-    struct SocketInfo si;
-    si.socket = sock;
-    si.address = address;
-    return si;
+    struct SocketInfo info;
+    info.socket = sock;
+    info.address = address;
+    return info;
 }
 
-int main() {
+int processRequests(int port) {
+    // Server response
+    char *response = "Message Received by Server"; 
+    
     int fresh_socket, read_value;
-    char msg = 0; 
-     
-    struct SocketInfo connection = init();
-    fresh_socket = connection.socket;
+    char msg[1024] = {0}; 
+    
+    struct SocketInfo connection = init(port);
     struct sockaddr_in address = connection.address;
     int addrlen = sizeof(address);
 
-    char *response = "Message Received by Server"; 
+    // Continue accepting messages indefinetly
+    while (1) {
+        // Reset the the socket to our original value
+        fresh_socket = connection.socket;
+        if (listen(fresh_socket, 3) < 0) { 
+            perror("Error while listening"); 
+            exit(EXIT_FAILURE);
+        } 
+    
+        fresh_socket = accept(fresh_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen);
+        if (fresh_socket < 0) { 
+            perror("Error while accepting message"); 
+            exit(EXIT_FAILURE);
+        } 
 
-
-    if (listen(fresh_socket, 3) < 0) { 
-        printf("Error while listening"); 
-        exit(1);
-    } 
-
-    fresh_socket = accept(fresh_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen);
-    if (fresh_socket < 0) { 
-        printf("Error while accepting message"); 
-        exit(1);
-    } 
-
-    read_value = read(fresh_socket , &msg, 1024); 
-    printf("%c\n", msg); 
-    send(fresh_socket , response , strlen(response) , 0 ); 
-    printf("Message Confirmation Sent to Client\n"); 
+        read_value = read(fresh_socket , msg, 1024); 
+        printf("%s\n", msg);
+        // TODO: implement timestamps in response
+        // char *cur_time = get_timestamp(); 
+        // printf("%s\n", cur_time);
+        // response = concat(response, cur_time);
+        send(fresh_socket, response, strlen(response), 0); 
+        printf("Message Confirmation Sent to Client\n"); 
+    }
+    
     return 0; 
+}
 
+int main(int argc, char *argv[]) {
+    int port;
+
+    if ( argc == 2 ) {
+      printf("Starting new TCP server on port: %s\n", argv[1]);
+      port = atoi(argv[1]);
+    } else if( argc > 2 ) {
+        perror("Error: Too many arguments supplied. Please supply a valid port for the TCP server to run on.");
+        exit(EXIT_FAILURE);
+    } else {
+        perror("Expected arguement missing => Port");
+        exit(EXIT_FAILURE);
+    }
+
+    if (processRequests(port) == 1) {
+        perror("Server Failure while handling message");
+        exit(EXIT_FAILURE);
+    }
 }
