@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "utilities.h"
-
+#define VER 1
 /*
 Intitializes the socket connections and bindings 
 for the server. returns a connection struct of 
@@ -22,7 +22,7 @@ struct SocketInfo init(int port) {
         perror("Error socket stream on port");
         exit(EXIT_FAILURE);
     } else {
-        printf("Socket Stream created on port: %u\n", port);
+        printf("Server: Socket Stream created on port -> %u\n", port);
     }
 
     int sockset = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
@@ -41,7 +41,7 @@ struct SocketInfo init(int port) {
         perror("Error binding to port");
         exit(EXIT_FAILURE);
     } else {
-        printf("Socket Binded to port: %u\n", port);
+        printf("Server: Socket Binded to port -> %u\n", port);
     }
 
     struct SocketInfo info;
@@ -52,7 +52,7 @@ struct SocketInfo init(int port) {
 
 int processMessages(int port) {
     // Server response
-    char *response = "Message Received by Server"; 
+    char *response = "Message Received"; 
     
     int fresh_socket, read_value;
     char msg[1024] = {0}; 
@@ -63,6 +63,7 @@ int processMessages(int port) {
 
     // Continue accepting messages indefinetly
     while (1) {
+        printf("Server: Listening for messages...\n"); 
         // Reset the the socket to our original value
         fresh_socket = connection.socket;
         if (listen(fresh_socket, 3) < 0) { 
@@ -77,13 +78,13 @@ int processMessages(int port) {
         } 
 
         read_value = read(fresh_socket , msg, 1024); 
-        printf("%s\n", msg);
+        printf("Client: %s\n", msg);
         // TODO: implement timestamps in response
         // char *cur_time = get_timestamp(); 
         // printf("%s\n", cur_time);
         // response = concat(response, cur_time);
         send(fresh_socket, response, strlen(response), 0); 
-        printf("Message Confirmation Sent to Client\n"); 
+        printf("Server: Message Confirmation Sent to Client\n"); 
     }
     
     return 0; 
@@ -91,9 +92,10 @@ int processMessages(int port) {
 
 int main(int argc, char *argv[]) {
     int port;
+    printf("SocketStream Server v%d\n", VER );
 
     if ( argc == 2 ) {
-      printf("Starting new TCP server on port: %s\n", argv[1]);
+      printf("Server: Starting new TCP server on port -> %s\n", argv[1]);
       port = atoi(argv[1]);
     } else if( argc > 2 ) {
         perror("Error: Too many arguments supplied. Please supply a valid port for the TCP server to run on.");
