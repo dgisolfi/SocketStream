@@ -17,7 +17,6 @@
 Intitializes the socket connections and bindings 
 for the server. returns a connection struct of 
 type SocketInfo
-
 */
 struct SocketInfo init(int port) {
     struct sockaddr_in address;
@@ -75,7 +74,6 @@ int logMessage(char *log_time, char *msg) {
 int processMessages(int port) {
     char ch;
     int fresh_socket, read_value;
-    char *msg = malloc(sizeof(char)); 
     
     struct SocketInfo connection = init(port);
     struct sockaddr_in address = connection.address;
@@ -83,10 +81,8 @@ int processMessages(int port) {
 
     // Continue accepting messages indefinetly
     while (1) {
-        
-        // if(getchar()) {
-        //     exit(0);
-        // }
+        char *msg = malloc(sizeof(char));
+
         printf("Server: Listening for messages...\n"); 
         // Reset the the socket to our original value
         fresh_socket = connection.socket;
