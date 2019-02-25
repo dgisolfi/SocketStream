@@ -59,9 +59,6 @@ struct SocketInfo init(int port) {
 }
 
 int processMessages(int port) {
-    // Server response
-    char *response = "Message Received"; 
-    
     int fresh_socket, read_value;
     char *msg = malloc(sizeof(char)); 
     
@@ -85,15 +82,16 @@ int processMessages(int port) {
             exit(EXIT_FAILURE);
         } 
 
+        // Server response
+        char response[1024] = "Message Received at"; 
+        char *cur_time = time_stamp(); 
+        snprintf(response, sizeof(response), "%s: %s", response, cur_time);
+
         read_value = read(fresh_socket , msg, 1024); 
-        printf("Client: %s\n", msg);
-        // TODO: implement timestamps in response
-        // char *cur_time = get_timestamp(); 
-        // printf("%s\n", cur_time);
-        // response = concat(response, cur_time);
+        printf("Client: %s | Received at %s\n", msg, cur_time);
+        
         send(fresh_socket, response, strlen(response), 0); 
         printf("Server: Message Confirmation Sent to Client\n"); 
-        free(msg);
     }
     
     return 0; 

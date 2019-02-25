@@ -6,14 +6,21 @@ struct SocketInfo {
     struct sockaddr_in address;
 };
 
-char *get_timestamp() {
-    time_t timer;
-    char *timestamp;
-    struct tm *tm_info;
-    time(&timer);
+char *time_stamp(){
+    char *timestamp = (char *)malloc(sizeof(char) * 16);
+    time_t ltime;
+    ltime=time(NULL);
+    struct tm *tm;
+    tm=localtime(&ltime);
 
-    tm_info = localtime(&timer);
-    strftime(timestamp, 26, "%Y-%m-%dT%H:%M:%S", tm_info);
+    sprintf(timestamp,"%04d-%02d-%02dT%02d:%02d:%02d", 
+        tm->tm_year+1900, 
+        tm->tm_mon, 
+        tm->tm_mday, 
+        tm->tm_hour, 
+        tm->tm_min, 
+        tm->tm_sec
+    );
     return timestamp;
 }
 
