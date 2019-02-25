@@ -58,7 +58,22 @@ struct SocketInfo init(int port) {
     return info;
 }
 
+int logMessage(char *log_time, char *msg) {
+    FILE *f;
+    f = fopen("server.log", "a+"); // a+ (create + append) option will allow appending which is useful in a log file
+    if (f == NULL) { 
+        /* Something is wrong   */
+        return 1;
+    };
+
+    fprintf(f, "[%s] Client Message: %s\n", log_time, msg);
+
+    fclose(f);
+    return 0;
+}
+
 int processMessages(int port) {
+    char ch;
     int fresh_socket, read_value;
     char *msg = malloc(sizeof(char)); 
     
@@ -67,7 +82,11 @@ int processMessages(int port) {
     int addrlen = sizeof(address);
 
     // Continue accepting messages indefinetly
-    while (getchar() != '\n') {
+    while (1) {
+        
+        // if(getchar()) {
+        //     exit(0);
+        // }
         printf("Server: Listening for messages...\n"); 
         // Reset the the socket to our original value
         fresh_socket = connection.socket;
@@ -86,8 +105,10 @@ int processMessages(int port) {
         char response[1024] = "Message Received at"; 
         char *cur_time = time_stamp(); 
         snprintf(response, sizeof(response), "%s: %s", response, cur_time);
+        read_value = read(fresh_socket , msg, 1024);
 
-        read_value = read(fresh_socket , msg, 1024); 
+        // Log this new message 
+        logMessage(cur_time, msg);
         printf("Client: %s | Received at %s\n", msg, cur_time);
         
         send(fresh_socket, response, strlen(response), 0); 

@@ -6,10 +6,6 @@ CPP = cppserver
 CFLAGS = -I$(TOP)/include $(COPT)
 LIBS = -lpthread
 
-ifeq ($(TARGET_OS),LINUX) 
-	LIBS += -ldl
-endif
-
 all: $(PROG)
 
 $(PROG): $(SRC)
