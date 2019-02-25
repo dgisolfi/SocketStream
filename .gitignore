@@ -52,6 +52,6 @@ Mkfile.old
 dkms.conf
 
 
-/client/CppClient
+.DS_Store
 .vscode
 .vs
